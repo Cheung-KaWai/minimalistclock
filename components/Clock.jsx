@@ -1,12 +1,5 @@
-import {
-  View,
-  Text,
-  Dimensions,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, Dimensions, StyleSheet } from "react-native";
 import React, { useEffect, useState } from "react";
-import Menu from "./MenuItems/Menu";
 
 const width = Dimensions.get("window").width;
 
@@ -15,12 +8,11 @@ export default function Clock() {
   const [minute, setMinute] = useState(0);
   const [second, setSecond] = useState(0);
   const [dimensions, setDimensions] = useState(width);
-  const [showMenu, setShowMenu] = useState(true);
 
   useEffect(() => {
     const tick = () => {
       const date = new Date();
-      setHour(hour);
+      setHour(date.getHours());
       setMinute(date.getMinutes());
       setSecond(date.getSeconds());
     };
@@ -35,36 +27,13 @@ export default function Clock() {
     };
   }, []);
 
-  useEffect(() => {
-    console.log("hello sexy banana");
-  }, [minute]);
-
-  const handleScreenPress = () => {
-    setShowMenu((prev) => !prev);
-  };
-
   return (
-    <TouchableOpacity
-      style={clock().container}
-      onPress={handleScreenPress}
-      activeOpacity={1}
-    >
+    <>
+      <Text style={time({ dimensions }).units}>{hour}</Text>
       <Text style={time({ dimensions }).units}>{minute}</Text>
-      <Text style={time({ dimensions }).units}>{second}</Text>
-      <Menu showMenu={showMenu} />
-    </TouchableOpacity>
+    </>
   );
 }
-
-const clock = () =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: "#0d0f14",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-  });
 
 const time = ({ dimensions }) =>
   StyleSheet.create({

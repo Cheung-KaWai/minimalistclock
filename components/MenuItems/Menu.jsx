@@ -4,6 +4,7 @@ import Timer from "./Timer";
 import SettingIcon from "./Settings";
 import Pomodoro from "./Pomodoro";
 import Sound from "./Sound";
+import { useNavigation } from "@react-navigation/native";
 
 const width = Dimensions.get("window").width;
 
@@ -11,19 +12,20 @@ export default function Menu({ showMenu }) {
   const [dimensions, setDimensions] = useState(width);
 
   const hitSlop = { top: 15, bottom: 15, left: 15, right: 15 };
+  const navigation = useNavigation();
 
   return (
     <View style={menu({ dimensions, showMenu }).container}>
       <TouchableOpacity
         style={menuItem.item}
-        onPress={() => console.log("1")}
+        onPress={() => navigation.navigate("Home")}
         hitSlop={hitSlop}
       >
         <Timer />
       </TouchableOpacity>
       <TouchableOpacity
         style={menuItem.item}
-        onPress={() => console.log("2")}
+        onPress={() => navigation.navigate("Study")}
         hitSlop={hitSlop}
       >
         <Pomodoro />
@@ -54,6 +56,10 @@ const menu = ({ dimensions, showMenu }) =>
       flexDirection: "row",
       justifyContent: "space-between",
       opacity: showMenu ? 1 : 0,
+      position: "absolute",
+      left: "50%",
+      bottom: 50,
+      transform: [{ translateX: -(dimensions - 150) / 2 }],
     },
   });
 
