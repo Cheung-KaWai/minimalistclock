@@ -1,6 +1,12 @@
-import { View, Text, Dimensions, StatusBar, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Dimensions,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import Menu from "./MenuItems/Menu";
 
 const width = Dimensions.get("window").width;
 
@@ -9,6 +15,7 @@ export default function Clock() {
   const [minute, setMinute] = useState(0);
   const [second, setSecond] = useState(0);
   const [dimensions, setDimensions] = useState(width);
+  const [showMenu, setShowMenu] = useState(true);
 
   useEffect(() => {
     const tick = () => {
@@ -32,11 +39,20 @@ export default function Clock() {
     console.log("hello sexy banana");
   }, [minute]);
 
+  const handleScreenPress = () => {
+    setShowMenu((prev) => !prev);
+  };
+
   return (
-    <View style={clock().container}>
+    <TouchableOpacity
+      style={clock().container}
+      onPress={handleScreenPress}
+      activeOpacity={1}
+    >
       <Text style={time({ dimensions }).units}>{minute}</Text>
-      <Text style={time({ dimensions, mb: true }).units}>{second}</Text>
-    </View>
+      <Text style={time({ dimensions }).units}>{second}</Text>
+      <Menu showMenu={showMenu} />
+    </TouchableOpacity>
   );
 }
 
@@ -50,17 +66,17 @@ const clock = () =>
     },
   });
 
-const time = ({ dimensions, mb }) =>
+const time = ({ dimensions }) =>
   StyleSheet.create({
     units: {
       backgroundColor: "#151922",
-      width: dimensions - 100,
-      height: dimensions - 100,
+      width: dimensions - 150,
+      height: dimensions - 150,
       color: "#fff",
       fontSize: dimensions - 250,
       textAlign: "center",
-      lineHeight: dimensions - 100,
+      lineHeight: dimensions - 150,
       borderRadius: 10,
-      marginBottom: mb ? 0 : 50,
+      marginBottom: 30,
     },
   });
