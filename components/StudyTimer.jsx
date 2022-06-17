@@ -14,6 +14,8 @@ export default function StudyTimer() {
   const [value, setValue] = useState(60);
   const [dimensions, setDimensions] = useState(width);
   const [start, setStart] = useState(false);
+  const [initialCountDown, setInitialCountDown] = useState(60);
+  const [completion, setCompletion] = useState(100);
 
   let tick;
 
@@ -23,23 +25,26 @@ export default function StudyTimer() {
   };
 
   useEffect(() => {
+    console.log(value / initialCountDown);
     if (start) {
       tick = setInterval(() => {
         setValue((prev) => prev - 1);
       }, 1000);
     }
+
+    if (value <= 0 && start) {
+      setStart(false);
+      setValue(60);
+      setInitialCountDown(60);
+      clearInterval(tick);
+    }
+
+    setCompletion((value / initialCountDown) * 100);
+
     return () => {
       clearInterval(tick);
     };
   }, [start, value]);
-
-  useEffect(() => {
-    if (value <= 0 && start) {
-      setStart(false);
-      setValue(60);
-      clearInterval(tick);
-    }
-  }, [value]);
 
   return (
     <View>
@@ -47,11 +52,18 @@ export default function StudyTimer() {
         keyboardType="numeric"
         style={style({ dimensions }).input}
         maxLength={2}
-        onChangeText={(value) => setValue(value)}
+        onChangeText={(value) => {
+          setValue(value);
+          setInitialCountDown(value);
+        }}
         editable={!start}
       >
         {value}
       </TextInput>
+      <View style={progress({ dimensions }).container}>
+        <View style={progress({ dimensions }).bar}></View>
+        <View style={progress({ dimensions, completion }).barBackground}></View>
+      </View>
       <TouchableOpacity
         style={style({ dimensions }).button}
         activeOpacity={0.9}
@@ -92,3 +104,28 @@ const button = StyleSheet.create({
     color: "#868e96",
   },
 });
+
+const progress = ({ dimensions, completion }) =>
+  StyleSheet.create({
+    container: {
+      width: dimensions - 150,
+      position: "relative",
+    },
+    bar: {
+      width: "100%",
+      height: 10,
+      backgroundColor: "red",
+      position: "absolute",
+      top: 0,
+      left: 0,
+    },
+    barBackground: {
+      width: `${completion}%`,
+      height: 10,
+      backgroundColor: "blue",
+      position: "absolute",
+      top: 0,
+      left: 0,
+      zIndex: 10,
+    },
+  });
