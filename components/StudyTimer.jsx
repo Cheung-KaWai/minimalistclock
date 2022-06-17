@@ -6,13 +6,41 @@ import {
   TouchableOpacity,
   Text,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const width = Dimensions.get("window").width;
 
 export default function StudyTimer() {
   const [value, setValue] = useState(60);
   const [dimensions, setDimensions] = useState(width);
+  const [start, setStart] = useState(false);
+
+  let tick;
+
+  const handleStudying = () => {
+    if (start) clearInterval(tick);
+    setStart((prev) => !prev);
+  };
+
+  useEffect(() => {
+    if (start) {
+      tick = setInterval(() => {
+        setValue((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => {
+      clearInterval(tick);
+    };
+  }, [start, value]);
+
+  useEffect(() => {
+    if (value <= 0 && start) {
+      setStart(false);
+      setValue(60);
+      clearInterval(tick);
+    }
+  }, [value]);
+
   return (
     <View>
       <TextInput
@@ -20,14 +48,18 @@ export default function StudyTimer() {
         style={style({ dimensions }).input}
         maxLength={2}
         onChangeText={(value) => setValue(value)}
+        editable={!start}
       >
         {value}
       </TextInput>
       <TouchableOpacity
         style={style({ dimensions }).button}
         activeOpacity={0.9}
+        onPress={handleStudying}
       >
-        <Text style={button.buttonText}>Start studying</Text>
+        <Text style={button.buttonText}>
+          {start ? "Pause" : "Start studying"}
+        </Text>
       </TouchableOpacity>
     </View>
   );
