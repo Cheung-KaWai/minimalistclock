@@ -9,12 +9,13 @@ import {
 import React, { useState, useEffect } from "react";
 
 const width = Dimensions.get("window").width;
+const intialTime = 3600;
 
 export default function StudyTimer() {
-  const [value, setValue] = useState(60);
+  const [value, setValue] = useState(intialTime);
   const [dimensions, setDimensions] = useState(width);
   const [start, setStart] = useState(false);
-  const [initialCountDown, setInitialCountDown] = useState(60);
+  const [initialCountDown, setInitialCountDown] = useState(intialTime);
   const [completion, setCompletion] = useState(100);
 
   let tick;
@@ -25,7 +26,6 @@ export default function StudyTimer() {
   };
 
   useEffect(() => {
-    console.log(value / initialCountDown);
     if (start) {
       tick = setInterval(() => {
         setValue((prev) => prev - 1);
@@ -34,8 +34,8 @@ export default function StudyTimer() {
 
     if (value <= 0 && start) {
       setStart(false);
-      setValue(60);
-      setInitialCountDown(60);
+      setValue(intialTime);
+      setInitialCountDown(intialTime);
       clearInterval(tick);
     }
 
@@ -53,16 +53,19 @@ export default function StudyTimer() {
         style={style({ dimensions }).input}
         maxLength={2}
         onChangeText={(value) => {
-          setValue(value);
-          setInitialCountDown(value);
+          setValue(value * 60);
+          setInitialCountDown(value * 60);
         }}
         editable={!start}
       >
-        {value}
+        {Math.trunc(value / 60)}
       </TextInput>
       <View style={progress({ dimensions }).container}>
-        <View style={progress({ dimensions }).bar}></View>
-        <View style={progress({ dimensions, completion }).barBackground}></View>
+        <View style={progress({ dimensions }).bar}>
+          <View
+            style={progress({ dimensions, completion }).barBackground}
+          ></View>
+        </View>
       </View>
       <TouchableOpacity
         style={style({ dimensions }).button}
@@ -110,22 +113,18 @@ const progress = ({ dimensions, completion }) =>
     container: {
       width: dimensions - 150,
       position: "relative",
+      marginTop: 20,
     },
     bar: {
       width: "100%",
       height: 10,
-      backgroundColor: "red",
-      position: "absolute",
-      top: 0,
-      left: 0,
+      backgroundColor: "#151922",
+      borderRadius: 3,
     },
     barBackground: {
       width: `${completion}%`,
       height: 10,
-      backgroundColor: "blue",
-      position: "absolute",
-      top: 0,
-      left: 0,
-      zIndex: 10,
+      backgroundColor: "#fff",
+      borderRadius: 3,
     },
   });

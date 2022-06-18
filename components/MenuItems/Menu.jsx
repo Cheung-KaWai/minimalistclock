@@ -52,6 +52,7 @@ const menu = ({ dimensions, showMenu }) =>
   StyleSheet.create({
     container: {
       width: dimensions - 150,
+      maxWidth: 300,
       height: 30,
       flexDirection: "row",
       justifyContent: "space-between",
